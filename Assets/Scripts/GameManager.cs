@@ -5,17 +5,25 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private DuelInputBehaviour input;
     [SerializeField] private PlayerController player;
-
+    
+    [Header("Duel Mode")]
+    [SerializeField] private bool isDuelMode = false;
 
     private void OnEnable()
     {
-        input.OnAttack += OnPlayerAttack;
-        
+
+        if (!isDuelMode && input != null)
+        {
+            input.OnAttack += OnPlayerAttack;
+        }
     }
     
     private void OnDisable()
     {
-        input.OnAttack -= OnPlayerAttack;
+        if (input != null)
+        {
+            input.OnAttack -= OnPlayerAttack;
+        }
     }
     
     private void OnPlayerAttack()
@@ -33,5 +41,4 @@ public class GameManager : MonoBehaviour
         input.ResetAttack();
         Debug.Log("Player Attacked!");
     }
-    
 }
