@@ -23,6 +23,7 @@ namespace DuelState
         
         // False start flag (attacking before signal)
         public bool FalseStart { get; private set; }
+        public bool PlayerFalseStart { get; private set; }
         
         // Event handlers
         public event Action<DuelState> OnStateChanged;
@@ -47,6 +48,7 @@ namespace DuelState
             PlayerAttacked = false;
             AIAttacked = false;
             FalseStart = false;
+            PlayerFalseStart = false;
             SignalAtRealTime = -1f;
             PlayerAttackAtRealTime = -1f;
             AIAttackAtRealTime = -1f;
@@ -89,6 +91,7 @@ namespace DuelState
             if (State == DuelState.Waiting)
             {
                 FalseStart = true;
+                PlayerFalseStart = true;
                 SetState(DuelState.Results);
                 OnDuelEnded?.Invoke(DuelOutcome.FalseStart, null);
                 return;

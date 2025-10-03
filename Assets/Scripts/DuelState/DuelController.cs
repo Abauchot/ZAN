@@ -248,7 +248,9 @@ namespace DuelState
             // Format result message based on outcome
             msText.text = outcome switch
             {
-                DuelOutcome.FalseStart => "False Start! You lose.",
+                DuelOutcome.FalseStart => _sm.PlayerFalseStart 
+                    ? "False Start! You lose." 
+                    : "False Start! AI loses. You win!",
                 DuelOutcome.PlayerWin => 
                     $"You Win! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
                 DuelOutcome.AIWin => 
