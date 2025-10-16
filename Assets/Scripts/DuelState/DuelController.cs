@@ -21,9 +21,26 @@ namespace DuelState
         [SerializeField] private TMP_Text msText;
         [SerializeField] private TMP_Text hintText;
 
+        [Header("BO5 Settings")]
+        [SerializeField] private GameObject endPanel;
+        [SerializeField] private TMP_Text endText;
+        [SerializeField] private UnityEngine.UI.Button restartButton;
+
+        [Header("BO5 Visuals")]
+        [SerializeField] private UnityEngine.UI.Image[] playerLives;
+        [SerializeField] private UnityEngine.UI.Image[] aiLives;
+        [SerializeField] private Sprite fullHeart;
+        [SerializeField] private Sprite emptyHeart;
+        [SerializeField] private Color normalLifeColor = Color.white;
+
         private DuelStateMachine _sm;
         private Coroutine _loop;
         private Coroutine _aiRoutine; 
+
+        private int _playerScore = 0;
+        private int _aiScore = 0;
+        private const int MaxScore = 3;
+        private bool _duelFinished = false;
 
         private void Awake()
         {
@@ -47,6 +64,12 @@ namespace DuelState
             _sm.OnStateChanged += HandleStateChanged;
             _sm.OnSignal += HandleSignal;
             _sm.OnDuelEnded += HandleResult; 
+            
+            if (endPanel != null)
+                endPanel.SetActive(false);
+            if (restartButton != null)
+                restartButton.onClick.AddListener(RestartBo5);
+            UpdateLivesVisual();
         }
 
         private void OnEnable()
@@ -73,6 +96,10 @@ namespace DuelState
             {
                 StartRound();
             }
+            _playerScore = 0;
+            _aiScore = 0;
+            _duelFinished = false;
+            UpdateLivesVisual();
         }
 
         /// <summary>
@@ -174,8 +201,9 @@ namespace DuelState
         private IEnumerator ResultsThenRestart()
         {
             input.SetAttackEnabled(false);
-            yield return WaitRealtime(config.resultStaySeconds); 
-            StartRound();
+            yield return WaitRealtime(config.resultStaySeconds);
+            if (!_duelFinished)
+                StartRound();
         }
 
         /// <summary>
@@ -260,6 +288,58 @@ namespace DuelState
                 DuelOutcome.NoAttack => "No attack registered.",
                 _ => ""
             };
+            switch (outcome)
+            {
+                case DuelOutcome.PlayerWin:
+                    _playerScore++;
+                    break;
+                case DuelOutcome.AIWin:
+                    _aiScore++;
+                    break;
+            }
+            UpdateLivesVisual();
+            if (_playerScore >= MaxScore || _aiScore >= MaxScore)
+            {
+                _duelFinished = true;
+                ShowEndPanel();
+            }
+        }
+        private void UpdateLivesVisual()
+        {
+            if (playerLives == null || !fullHeart || !emptyHeart)
+            {
+                return;
+            }
+            for (var i = 0; i < playerLives.Length; i++)
+            {
+                playerLives[i].sprite = i < (MaxScore - _aiScore) ? fullHeart : emptyHeart;
+                playerLives[i].color = normalLifeColor;
+            }
+            if (aiLives == null)
+            {
+                return;
+            }
+            for (var i = 0; i < aiLives.Length; i++)
+            {
+                aiLives[i].sprite = i < (MaxScore - _playerScore) ? fullHeart : emptyHeart;
+                aiLives[i].color = normalLifeColor;
+            }
+        }
+        private void ShowEndPanel()
+        {
+            if (!endPanel || !endText) return;
+            endPanel.SetActive(true);
+            endText.text = _playerScore > _aiScore ? "You win !" : "AI win !";
+        }
+        private void RestartBo5()
+        {
+            _playerScore = 0;
+            _aiScore = 0;
+            _duelFinished = false;
+            if (endPanel != null)
+                endPanel.SetActive(false);
+            UpdateLivesVisual();
+            StartRound();
         }
 
         /// <summary>
@@ -305,4 +385,3 @@ namespace DuelState
         }
     }
 }
-
