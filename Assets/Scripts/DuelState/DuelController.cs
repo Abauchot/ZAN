@@ -37,10 +37,10 @@ namespace DuelState
         private Coroutine _loop;
         private Coroutine _aiRoutine; 
 
-        private int _playerScore = 0;
-        private int _aiScore = 0;
+        private int _playerScore;
+        private int _aiScore;
         private const int MaxScore = 3;
-        private bool _duelFinished = false;
+        private bool _duelFinished;
 
         private void Awake()
         {
@@ -105,9 +105,9 @@ namespace DuelState
         /// <summary>
         /// Starts a new duel round
         /// </summary>
-        public void StartRound()
+        private void StartRound()
         {
-            if (_sm == null || input == null || config == null) return;
+            if (_sm == null || !input || !config) return;
         
             if (_loop != null) StopCoroutine(_loop);
             _loop = StartCoroutine(RunRound());
@@ -137,8 +137,8 @@ namespace DuelState
             var t0 = Time.realtimeSinceStartup;
             
             // Determine if AI will make a false start this round
-            bool aiWillFalseStart = UnityEngine.Random.value < config.aiFalseStartChance;
-            float aiFalseStartTime = aiWillFalseStart ? UnityEngine.Random.Range(0.3f, wait * 0.8f) : float.MaxValue;
+            var aiWillFalseStart = UnityEngine.Random.value < config.aiFalseStartChance;
+            var aiFalseStartTime = aiWillFalseStart ? UnityEngine.Random.Range(0.3f, wait * 0.8f) : float.MaxValue;
             
             // Wait loop - check for player false start or AI false start
             while (Time.realtimeSinceStartup - t0 < wait)
@@ -212,15 +212,13 @@ namespace DuelState
         /// </summary>
         private void OnPlayerAttack()
         {
-            if (_sm != null)
-            {
-                _sm.RegisterPlayerAttack(Time.realtimeSinceStartup);
+            if (_sm == null) return;
+            _sm.RegisterPlayerAttack(Time.realtimeSinceStartup);
 
-                // If both player and AI have attacked, resolve winner immediately
-                if (_sm.State == DuelState.Resolve && _sm.AIAttacked)
-                {
-                    _sm.ResolveWinner();
-                }
+            // If both player and AI have attacked, resolve winner immediately
+            if (_sm.State == DuelState.Resolve && _sm.AIAttacked)
+            {
+                _sm.ResolveWinner();
             }
         }
 
@@ -253,12 +251,8 @@ namespace DuelState
         /// </summary>
         private void HandleSignal()
         {
-            Debug.Log("[Signal] GO! Starting AI reaction coroutine...");
-            
             if (_aiRoutine != null) StopCoroutine(_aiRoutine);
             _aiRoutine = StartCoroutine(AIReactAfterDelay());
-            
-            Debug.Log($"[Signal] AI coroutine started: {_aiRoutine != null}");
         }
 
         /// <summary>
@@ -271,7 +265,7 @@ namespace DuelState
             if (!msText) return;
             
             // Calculate AI reaction time if they attacked
-            float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : (float?)null;
+            float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : null;
             
             // Format result message based on outcome
             msText.text = outcome switch
@@ -296,13 +290,23 @@ namespace DuelState
                 case DuelOutcome.AIWin:
                     _aiScore++;
                     break;
+                case DuelOutcome.FalseStart:
+                    if (_sm.PlayerFalseStart)
+                        _aiScore++;
+                    else
+                        _playerScore++;
+                    break;
+                case DuelOutcome.None:
+                case DuelOutcome.Draw:
+                case DuelOutcome.NoAttack:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
             }
             UpdateLivesVisual();
-            if (_playerScore >= MaxScore || _aiScore >= MaxScore)
-            {
-                _duelFinished = true;
-                ShowEndPanel();
-            }
+            if (_playerScore < MaxScore && _aiScore < MaxScore) return;
+            _duelFinished = true;
+            ShowEndPanel();
         }
         private void UpdateLivesVisual()
         {
@@ -358,25 +362,19 @@ namespace DuelState
         private IEnumerator AIReactAfterDelay()
         {
             // Random reaction time within configured range
-            float aiMs = UnityEngine.Random.Range(config.aiReactRangeMs.x, config.aiReactRangeMs.y);
+            var aiMs = UnityEngine.Random.Range(config.aiReactRangeMs.x, config.aiReactRangeMs.y);
             var delay = aiMs / 1000f;
-            
-            Debug.Log($"[AI] Will attack in {aiMs:F0} ms (delay: {delay:F3}s)");
-        
             var t0 = Time.realtimeSinceStartup;
             // Wait for delay AND ensure we're still in a valid state (Signal or Resolve)
             while (Time.realtimeSinceStartup - t0 < delay && 
                    (_sm.State == DuelState.Signal || _sm.State == DuelState.Resolve)) 
                 yield return null;
-
-            Debug.Log($"[AI] Delay finished. State: {_sm.State}, PlayerAttacked: {_sm.PlayerAttacked}");
+            
 
             // Attack if still in valid state
             if (_sm.State == DuelState.Signal || _sm.State == DuelState.Resolve)
             {
-                Debug.Log($"[AI] Attacking now!");
                 _sm.RegisterAIAttack(Time.realtimeSinceStartup);
-                Debug.Log($"[AI] Attack registered. AIAttacked: {_sm.AIAttacked}");
             }
             else
             {
