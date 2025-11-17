@@ -15,8 +15,9 @@ namespace DuelState
         [Header("Refs")]
         [SerializeField] private DuelInputBehaviour input;
         [SerializeField] private DuelConfig config;
+        [SerializeField] private PlayerAnimationController playerAnimation;
 
-        [Header("UI (optional)")]
+        [Header("UI settings")]
         [SerializeField] private TMP_Text stateText;
         [SerializeField] private TMP_Text msText;
         [SerializeField] private TMP_Text hintText;
@@ -32,6 +33,17 @@ namespace DuelState
         [SerializeField] private Sprite fullHeart;
         [SerializeField] private Sprite emptyHeart;
         [SerializeField] private Color normalLifeColor = Color.white;
+        
+        [Header("Dash Settings")]
+        [SerializeField] private Transform playerTransform;
+        [SerializeField] private Transform aiTransform;
+        [SerializeField] private float dashStopDistanceFromTarget = 2f;
+        [SerializeField] private float dashForwardDuration = 0.12f;
+        [SerializeField] private float retreatDuration  = 0.18f;
+        [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        [SerializeField] private AnimationCurve retreatCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        private Vector3 _playerStartPos;
+        private Coroutine _playerMoveRoutine;
 
         private DuelStateMachine _sm;
         private Coroutine _loop;
@@ -58,7 +70,7 @@ namespace DuelState
                 enabled = false;
                 return;
             }
-
+            
             // Initialize state machine and subscribe to its events
             _sm = new DuelStateMachine();
             _sm.OnStateChanged += HandleStateChanged;
@@ -70,6 +82,11 @@ namespace DuelState
             if (restartButton != null)
                 restartButton.onClick.AddListener(RestartBo5);
             UpdateLivesVisual();
+
+            if (playerTransform != null)
+            {
+                _playerStartPos = playerTransform.position;
+            }
         }
 
         private void OnEnable()
@@ -107,6 +124,15 @@ namespace DuelState
         /// </summary>
         private void StartRound()
         {
+            if (playerTransform)
+            {
+                if (_playerMoveRoutine != null)
+                {
+                    StopCoroutine(_playerMoveRoutine);
+                    playerTransform.position = _playerStartPos;
+                }
+            }
+            
             if (_sm == null || !input || !config) return;
         
             if (_loop != null) StopCoroutine(_loop);
@@ -201,6 +227,8 @@ namespace DuelState
         private IEnumerator ResultsThenRestart()
         {
             input.SetAttackEnabled(false);
+            if (playerAnimation)
+                playerAnimation.ResetAttack();
             yield return WaitRealtime(config.resultStaySeconds);
             if (!_duelFinished)
                 StartRound();
@@ -214,8 +242,29 @@ namespace DuelState
         {
             if (_sm == null) return;
             _sm.RegisterPlayerAttack(Time.realtimeSinceStartup);
-
-            // If both player and AI have attacked, resolve winner immediately
+            
+            Debug.Log($"[DuelController] OnPlayerAttack called. playerAnimation assigned: {playerAnimation != null}");
+            
+            // Trigger attack animation
+            if (playerAnimation != null)
+            {
+                playerAnimation.PlayAttack();
+            }
+            else
+            {
+                Debug.LogError("[DuelController] playerAnimation is NULL! Assign PlayerAnimationController in inspector.");
+            }
+            
+            var validAttack = _sm.State is DuelState.Signal or DuelState.Resolve;
+            if (validAttack && playerTransform != null && aiTransform != null)
+            {
+                if (_playerMoveRoutine != null)
+                {
+                    StopCoroutine(_playerMoveRoutine);
+                }
+                _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat());
+            }
+            
             if (_sm.State == DuelState.Resolve && _sm.AIAttacked)
             {
                 _sm.ResolveWinner();
@@ -381,5 +430,50 @@ namespace DuelState
                 Debug.Log($"[AI] Cannot attack - invalid state: {_sm.State}");
             }
         }
+        
+        private IEnumerator PlayerDashAndRetreat()
+        {
+            if (playerTransform == null || aiTransform == null)
+                yield break;
+
+            Vector3 start = _playerStartPos;
+            Vector3 dir = aiTransform.position - start;
+            if (dir.sqrMagnitude < 0.0001f) yield break;
+            dir.Normalize();
+
+            Vector3 dashEnd = aiTransform.position - dir * dashStopDistanceFromTarget;
+
+            // PHASE 1 : dash vers l’ennemi pendant l’attaque
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime / dashForwardDuration;
+                float k = dashCurve != null ? dashCurve.Evaluate(t) : t;
+                playerTransform.position = Vector3.Lerp(start, dashEnd, k);
+                yield return null;
+            }
+            playerTransform.position = dashEnd;
+
+            // Petit temps de "contact" (facultatif)
+            yield return new WaitForSeconds(0.05f);
+
+            // PHASE 2 : retour avec l’anim de run
+            if (playerAnimation != null)
+                playerAnimation.PlayRun();
+
+            t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime / retreatDuration;
+                float k = retreatCurve != null ? retreatCurve.Evaluate(t) : t;
+                playerTransform.position = Vector3.Lerp(dashEnd, start, k);
+                yield return null;
+            }
+            playerTransform.position = start;
+
+            if (playerAnimation != null)
+                playerAnimation.BackToIdleFromAttack();
+        }
+
     }
 }
