@@ -1,55 +1,43 @@
 fileFormatVersion: 2
-guid: a475b65e80d868a44a61053c64f40435
+guid: 4e63caa775d1f5b4a996f3663f6e2079
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4726913989911992049
-    second: RUN_0
+      213: -7016485979008455450
+    second: rain effect_0
   - first:
-      213: -1224304467317232117
-    second: RUN_1
+      213: 602019369324772838
+    second: rain effect_1
   - first:
-      213: 3159551424834153068
-    second: RUN_2
+      213: -5466527274089631559
+    second: rain effect_2
   - first:
-      213: -4270742793311013030
-    second: RUN_3
+      213: -2865641836847145602
+    second: rain effect_3
   - first:
-      213: -4469841436486958459
-    second: RUN_4
+      213: -3268898380287242698
+    second: rain effect_4
   - first:
-      213: -5792612846293609617
-    second: RUN_5
+      213: -444495234391164820
+    second: rain effect_5
   - first:
-      213: -2380123854543253929
-    second: RUN_6
+      213: 7167656771658153183
+    second: rain effect_6
   - first:
-      213: -337668074351880697
-    second: RUN_7
+      213: -1010524290956982467
+    second: rain effect_7
   - first:
-      213: 1718851595628084743
-    second: RUN_8
+      213: 5841704892730406788
+    second: rain effect_8
   - first:
-      213: -4535927459801555040
-    second: RUN_9
+      213: 1810919964626972215
+    second: rain effect_9
   - first:
-      213: 5181134288013585454
-    second: RUN_10
+      213: -961572196632070007
+    second: rain effect_10
   - first:
-      213: -1053213273846010886
-    second: RUN_11
-  - first:
-      213: 1601432857290972425
-    second: RUN_12
-  - first:
-      213: -5224361195436993558
-    second: RUN_13
-  - first:
-      213: -8339773531561103994
-    second: RUN_14
-  - first:
-      213: -870784959491209719
-    second: RUN_15
+      213: 4584021466346218653
+    second: rain effect_11
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -171,79 +159,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RUN_0
+      name: rain effect_0
       rect:
         serializedVersion: 2
-        x: 39
-        y: 15
-        width: 26
-        height: 28
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f09a87b35c0a66eb0800000000000000
-      internalID: -4726913989911992049
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_1
-      rect:
-        serializedVersion: 2
-        x: 131
-        y: 15
-        width: 30
-        height: 29
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b0ee1a8d295620fe0800000000000000
-      internalID: -1224304467317232117
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_2
-      rect:
-        serializedVersion: 2
-        x: 227
-        y: 18
-        width: 32
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c6aa1d6e74bf8db20800000000000000
-      internalID: 3159551424834153068
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_3
-      rect:
-        serializedVersion: 2
-        x: 324
+        x: 20
         y: 20
-        width: 32
-        height: 26
+        width: 10
+        height: 5
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -252,152 +174,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a5733ad8e064bb4c0800000000000000
-      internalID: -4270742793311013030
+      spriteID: 6ec21b15d2f60ae90800000000000000
+      internalID: -7016485979008455450
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RUN_4
+      name: rain effect_1
       rect:
         serializedVersion: 2
-        x: 421
-        y: 18
-        width: 32
-        height: 28
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5828fdf45eee7f1c0800000000000000
-      internalID: -4469841436486958459
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_5
-      rect:
-        serializedVersion: 2
-        x: 518
-        y: 15
-        width: 30
-        height: 29
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f631e4f8e418c9fa0800000000000000
-      internalID: -5792612846293609617
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_6
-      rect:
-        serializedVersion: 2
-        x: 614
-        y: 15
-        width: 28
-        height: 28
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 75e0488f6f918fed0800000000000000
-      internalID: -2380123854543253929
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_7
-      rect:
-        serializedVersion: 2
-        x: 710
-        y: 15
-        width: 27
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7061448ecac505bf0800000000000000
-      internalID: -337668074351880697
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_8
-      rect:
-        serializedVersion: 2
-        x: 806
-        y: 15
-        width: 27
-        height: 27
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 70e760b5b669ad710800000000000000
-      internalID: 1718851595628084743
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_9
-      rect:
-        serializedVersion: 2
-        x: 903
-        y: 15
-        width: 26
-        height: 28
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0af9697f1062d01c0800000000000000
-      internalID: -4535927459801555040
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RUN_10
-      rect:
-        serializedVersion: 2
-        x: 998
+        x: 60
         y: 20
-        width: 27
-        height: 25
+        width: 30
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -406,20 +196,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e2c65a22f2617e740800000000000000
-      internalID: 5181134288013585454
+      spriteID: 6edf1804d6dca5800800000000000000
+      internalID: 602019369324772838
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RUN_11
+      name: rain effect_2
       rect:
         serializedVersion: 2
-        x: 1093
-        y: 22
-        width: 31
-        height: 24
+        x: 105
+        y: 20
+        width: 10
+        height: 15
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -428,20 +218,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: afbaeab8b1c3261f0800000000000000
-      internalID: -1053213273846010886
+      spriteID: 9b037e8386ef224b0800000000000000
+      internalID: -5466527274089631559
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RUN_12
+      name: rain effect_3
       rect:
         serializedVersion: 2
-        x: 1191
-        y: 19
-        width: 28
-        height: 26
+        x: 135
+        y: 20
+        width: 10
+        height: 15
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -450,20 +240,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 90d977ee2be693610800000000000000
-      internalID: 1601432857290972425
+      spriteID: e7d5a35aee13b38d0800000000000000
+      internalID: -2865641836847145602
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RUN_13
+      name: rain effect_4
       rect:
         serializedVersion: 2
-        x: 1288
-        y: 15
-        width: 25
-        height: 30
+        x: 160
+        y: 25
+        width: 5
+        height: 5
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -472,20 +262,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ae394af2c275f77b0800000000000000
-      internalID: -5224361195436993558
+      spriteID: 63e01241e3a82a2d0800000000000000
+      internalID: -3268898380287242698
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RUN_14
+      name: rain effect_5
       rect:
         serializedVersion: 2
-        x: 1386
-        y: 15
-        width: 23
-        height: 29
+        x: 185
+        y: 25
+        width: 5
+        height: 5
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -494,20 +284,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 68d6818b82c234c80800000000000000
-      internalID: -8339773531561103994
+      spriteID: c68b2c970f5d4d9f0800000000000000
+      internalID: -444495234391164820
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RUN_15
+      name: rain effect_6
       rect:
         serializedVersion: 2
-        x: 1482
-        y: 15
-        width: 23
-        height: 28
+        x: 200
+        y: 20
+        width: 10
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -516,8 +306,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 90606c561b95ae3f0800000000000000
-      internalID: -870784959491209719
+      spriteID: fdc7b92abd1a87360800000000000000
+      internalID: 7167656771658153183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain effect_7
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 20
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d370b98e285e9f1f0800000000000000
+      internalID: -1010524290956982467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain effect_8
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 20
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4877bd536a7e11150800000000000000
+      internalID: 5841704892730406788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain effect_9
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 20
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73ee048fc1ea12910800000000000000
+      internalID: 1810919964626972215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain effect_10
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 20
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9887ad98e2fc7a2f0800000000000000
+      internalID: -961572196632070007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain effect_11
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 20
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d94e4588c37bd9f30800000000000000
+      internalID: 4584021466346218653
       vertices: []
       indices: 
       edges: []
@@ -526,7 +426,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 342704252e3853c40903fee258b26a8d
+    spriteID: ce6ce4e91ffc1004bb52aae390f0a373
     internalID: 0
     vertices: []
     indices: 
@@ -538,22 +438,18 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      RUN_0: -4726913989911992049
-      RUN_1: -1224304467317232117
-      RUN_10: 5181134288013585454
-      RUN_11: -1053213273846010886
-      RUN_12: 1601432857290972425
-      RUN_13: -5224361195436993558
-      RUN_14: -8339773531561103994
-      RUN_15: -870784959491209719
-      RUN_2: 3159551424834153068
-      RUN_3: -4270742793311013030
-      RUN_4: -4469841436486958459
-      RUN_5: -5792612846293609617
-      RUN_6: -2380123854543253929
-      RUN_7: -337668074351880697
-      RUN_8: 1718851595628084743
-      RUN_9: -4535927459801555040
+      rain effect_0: -7016485979008455450
+      rain effect_1: 602019369324772838
+      rain effect_10: -961572196632070007
+      rain effect_11: 4584021466346218653
+      rain effect_2: -5466527274089631559
+      rain effect_3: -2865641836847145602
+      rain effect_4: -3268898380287242698
+      rain effect_5: -444495234391164820
+      rain effect_6: 7167656771658153183
+      rain effect_7: -1010524290956982467
+      rain effect_8: 5841704892730406788
+      rain effect_9: 1810919964626972215
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

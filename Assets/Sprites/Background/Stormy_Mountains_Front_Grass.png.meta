@@ -1,37 +1,31 @@
 fileFormatVersion: 2
-guid: 5895ab3d3c279514298dd06ecba9b6c3
+guid: 46bb2badc5c469744ae51b85ba7395fb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 815424164945274260
-    second: IDLE_0
+      213: -4033344158073982669
+    second: Stormy_Mountains_Front_Grass_0
   - first:
-      213: -270785710348516584
-    second: IDLE_1
+      213: 3605525260751683659
+    second: Stormy_Mountains_Front_Grass_1
   - first:
-      213: 8443794771774750484
-    second: IDLE_2
+      213: 8597592448312815709
+    second: Stormy_Mountains_Front_Grass_2
   - first:
-      213: 1777182293076053196
-    second: IDLE_3
+      213: -1644906356000439392
+    second: Stormy_Mountains_Front_Grass_3
   - first:
-      213: 6114163804962241700
-    second: IDLE_4
+      213: 5935677527012350381
+    second: Stormy_Mountains_Front_Grass_4
   - first:
-      213: -7154528564402915179
-    second: IDLE_5
+      213: -6880216532142769107
+    second: Stormy_Mountains_Front_Grass_5
   - first:
-      213: -8112586356116296526
-    second: IDLE_6
+      213: -2592934094410573280
+    second: Stormy_Mountains_Front_Grass_6
   - first:
-      213: 6124698253077029035
-    second: IDLE_7
-  - first:
-      213: 900705793506851975
-    second: IDLE_8
-  - first:
-      213: -705124532602476047
-    second: IDLE_9
+      213: 8253548672172284250
+    second: Stormy_Mountains_Front_Grass_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,12 +67,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -153,221 +147,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: IDLE_0
+      name: Stormy_Mountains_Front_Grass_0
       rect:
         serializedVersion: 2
-        x: 36
-        y: 15
-        width: 20
-        height: 34
+        x: 275
+        y: 0
+        width: 82
+        height: 91
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 49525dc25f7f05b00800000000000000
-      internalID: 815424164945274260
+      spriteID: 3317a199bdea608c0800000000000000
+      internalID: -4033344158073982669
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IDLE_1
+      name: Stormy_Mountains_Front_Grass_1
       rect:
         serializedVersion: 2
-        x: 132
-        y: 15
-        width: 21
-        height: 33
+        x: 311
+        y: 0
+        width: 14
+        height: 25
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 813cc64c4d9fd3cf0800000000000000
-      internalID: -270785710348516584
+      spriteID: b404dcb2f16690230800000000000000
+      internalID: 3605525260751683659
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IDLE_2
+      name: Stormy_Mountains_Front_Grass_2
       rect:
         serializedVersion: 2
-        x: 228
-        y: 15
-        width: 21
-        height: 32
+        x: 353
+        y: 0
+        width: 78
+        height: 93
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 41f3fe79b926e2570800000000000000
-      internalID: 8443794771774750484
+      spriteID: d50344d97c8c05770800000000000000
+      internalID: 8597592448312815709
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IDLE_3
+      name: Stormy_Mountains_Front_Grass_3
       rect:
         serializedVersion: 2
-        x: 324
-        y: 15
-        width: 21
-        height: 31
+        x: 389
+        y: 0
+        width: 54
+        height: 47
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ccc89ef21e1d9a810800000000000000
-      internalID: 1777182293076053196
+      spriteID: 0a3cfc1626e1c29e0800000000000000
+      internalID: -1644906356000439392
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IDLE_4
+      name: Stormy_Mountains_Front_Grass_4
       rect:
         serializedVersion: 2
-        x: 419
-        y: 15
-        width: 21
-        height: 32
+        x: 437
+        y: 0
+        width: 12
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4ac335d169fd9d450800000000000000
-      internalID: 6114163804962241700
+      spriteID: da917d22343cf5250800000000000000
+      internalID: 5935677527012350381
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IDLE_5
+      name: Stormy_Mountains_Front_Grass_5
       rect:
         serializedVersion: 2
-        x: 514
-        y: 15
-        width: 22
-        height: 32
+        x: 461
+        y: 0
+        width: 18
+        height: 55
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 598f06f4d2206bc90800000000000000
-      internalID: -7154528564402915179
+      spriteID: d2c3cd7548f8480a0800000000000000
+      internalID: -6880216532142769107
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IDLE_6
+      name: Stormy_Mountains_Front_Grass_6
       rect:
         serializedVersion: 2
-        x: 610
-        y: 15
-        width: 22
-        height: 32
+        x: 487
+        y: 0
+        width: 26
+        height: 47
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2bce10201bd4a6f80800000000000000
-      internalID: -8112586356116296526
+      spriteID: 02a98a8dd2c040cd0800000000000000
+      internalID: -2592934094410573280
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: IDLE_7
+      name: Stormy_Mountains_Front_Grass_7
       rect:
         serializedVersion: 2
-        x: 706
-        y: 15
-        width: 22
-        height: 32
+        x: 497
+        y: 0
+        width: 58
+        height: 77
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ba0ac137c9c4ff450800000000000000
-      internalID: 6124698253077029035
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: IDLE_8
-      rect:
-        serializedVersion: 2
-        x: 802
-        y: 15
-        width: 22
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 78cbc15a523ff7c00800000000000000
-      internalID: 900705793506851975
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: IDLE_9
-      rect:
-        serializedVersion: 2
-        x: 899
-        y: 15
-        width: 21
-        height: 34
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1f9e0d739f4e636f0800000000000000
-      internalID: -705124532602476047
+      spriteID: a59d935c9ce7a8270800000000000000
+      internalID: 8253548672172284250
       vertices: []
       indices: 
       edges: []
@@ -376,7 +326,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: bbdc693a665a2834a9fddbeb3ea95627
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -384,20 +334,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      IDLE_0: 815424164945274260
-      IDLE_1: -270785710348516584
-      IDLE_2: 8443794771774750484
-      IDLE_3: 1777182293076053196
-      IDLE_4: 6114163804962241700
-      IDLE_5: -7154528564402915179
-      IDLE_6: -8112586356116296526
-      IDLE_7: 6124698253077029035
-      IDLE_8: 900705793506851975
-      IDLE_9: -705124532602476047
+      Stormy_Mountains_Front_Grass_0: -4033344158073982669
+      Stormy_Mountains_Front_Grass_1: 3605525260751683659
+      Stormy_Mountains_Front_Grass_2: 8597592448312815709
+      Stormy_Mountains_Front_Grass_3: -1644906356000439392
+      Stormy_Mountains_Front_Grass_4: 5935677527012350381
+      Stormy_Mountains_Front_Grass_5: -6880216532142769107
+      Stormy_Mountains_Front_Grass_6: -2592934094410573280
+      Stormy_Mountains_Front_Grass_7: 8253548672172284250
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
