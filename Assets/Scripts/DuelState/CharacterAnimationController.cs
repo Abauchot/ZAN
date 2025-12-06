@@ -7,15 +7,18 @@ namespace DuelState
     {
         [SerializeField] private AnimationClip attackClip;
         [SerializeField] private AnimationClip hurtClip;
+        [SerializeField] private AnimationClip deathClip;
 
         public float AttackDuration => attackClip ? attackClip.length : 0.2f;
         public float HurtDuration   => hurtClip   ? hurtClip.length   : 0.2f;
+        public float DeathDuration  => deathClip  ? deathClip.length  : 0.8f;
 
         private Animator _animator;
 
         private static readonly int IsRunHash    = Animator.StringToHash("isRun");
         private static readonly int IsAttackHash = Animator.StringToHash("isAttack");
         private static readonly int IsHurtHash   = Animator.StringToHash("isHurt");
+        private static readonly int IsDeathHash  = Animator.StringToHash("isDeath");
 
         private void Awake()
         {
@@ -75,6 +78,15 @@ namespace DuelState
         {
             if (!_animator) return;
             _animator.SetBool(IsHurtHash, false);
+        }
+
+        public void PlayDeath()
+        {
+            if (!_animator) return;
+            _animator.SetBool(IsRunHash, false);
+            _animator.SetBool(IsAttackHash, false);
+            _animator.SetBool(IsHurtHash, false);
+            _animator.SetBool(IsDeathHash, true);
         }
 
         public void ResetAttack()

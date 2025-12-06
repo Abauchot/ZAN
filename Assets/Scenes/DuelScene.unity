@@ -350,6 +350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DuelState.PlayerAnimationController
   attackClip: {fileID: 7400000, guid: 66e9e95232c32a14f8a77216c5b283f2, type: 2}
   hurtClip: {fileID: 7400000, guid: c8ac8cc9f979cd242b4681d846d0b565, type: 2}
+  deathClip: {fileID: 7400000, guid: 396a24ab89dcc5144ac8b03f669d38f9, type: 2}
 --- !u!1 &78158135
 GameObject:
   m_ObjectHideFlags: 0
@@ -958,6 +959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DuelState.PlayerAnimationController
   attackClip: {fileID: 7400000, guid: d39ac37dab8b5a4418f6b08691f91954, type: 2}
   hurtClip: {fileID: 7400000, guid: 6f14fdd622e5b0b4c9db2f4bd4895e2f, type: 2}
+  deathClip: {fileID: 7400000, guid: 9957583c15adb6f44aff6dcae53ac7aa, type: 2}
 --- !u!1 &346643410
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,7 +978,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &346643411
 RectTransform:
   m_ObjectHideFlags: 0

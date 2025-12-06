@@ -377,16 +377,32 @@ namespace DuelState
 
             UpdateLivesVisual();
 
+            bool playerReachedMax = _playerScore >= MaxScore;
+            bool aiReachedMax = _aiScore >= MaxScore;
+
+            if (playerReachedMax || aiReachedMax)
+            {
+                _duelFinished = true;
+
+                if (playerReachedMax)
+                    StartCoroutine(PlayerWinSequence(true));
+                else
+                    StartCoroutine(AIWinSequence(true));
+
+                ShowEndPanel();
+                return;
+            }
+
             switch (outcome)
             {
                 case DuelOutcome.PlayerWin:
-                    StartCoroutine(PlayerWinSequence());
+                    StartCoroutine(PlayerWinSequence(false));
                     break;
                 case DuelOutcome.AIWin:
-                    StartCoroutine(AIWinSequence());
+                    StartCoroutine(AIWinSequence(false));
                     break;
                 case DuelOutcome.FalseStart:
-                    StartCoroutine(_sm.PlayerFalseStart ? AIWinSequence() : PlayerWinSequence());
+                    StartCoroutine(_sm.PlayerFalseStart ? AIWinSequence(false) : PlayerWinSequence(false));
                     break;
                 case DuelOutcome.None:
                 case DuelOutcome.Draw:
@@ -395,10 +411,6 @@ namespace DuelState
                 default:
                     throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
             }
-
-            if (_playerScore < MaxScore && _aiScore < MaxScore) return;
-            _duelFinished = true;
-            ShowEndPanel();
         }
 
 
@@ -465,18 +477,6 @@ namespace DuelState
             if (_sm.State is DuelState.Signal or DuelState.Resolve)
             {
                 _sm.RegisterAIAttack(Time.realtimeSinceStartup);
-                //
-                // if (aIAnimation)
-                //     aIAnimation.PlayAttack();
-                //
-                // if (_aiMoveRoutine != null)
-                //     StopCoroutine(_aiMoveRoutine);
-                //
-                // float forwardDuration = dashForwardDuration;
-                // if (aIAnimation && aIAnimation.AttackDuration > 0f)
-                //     forwardDuration = aIAnimation.AttackDuration * dashAttackDurationMultiplier;
-                //
-                // _aiMoveRoutine = StartCoroutine(AIDashAndRetreat(forwardDuration));
             }
 
             else
@@ -587,94 +587,48 @@ namespace DuelState
                 aIAnimation.BackToIdleFromAttack();
         }
 
-        // private IEnumerator PlayerWinSequence()
-        // {
-        //     // petit délai pour laisser le texte GO / le résultat se poser
-        //     yield return new WaitForSeconds(0.05f);
-        //
-        //     float forwardDuration = dashForwardDuration;
-        //     if (playerAnimation != null && playerAnimation.AttackDuration > 0f)
-        //         forwardDuration = playerAnimation.AttackDuration * dashAttackDurationMultiplier;
-        //
-        //     // gagnant : attaque + dash
-        //     if (playerAnimation)
-        //         playerAnimation.PlayAttack();
-        //
-        //     if (aIAnimation)
-        //         aIAnimation.PlayHurt();
-        //
-        //     if (_playerMoveRoutine != null)
-        //         StopCoroutine(_playerMoveRoutine);
-        //
-        //     yield return PlayerDashAndRetreat(forwardDuration);
-        //
-        //     // retour idle propre
-        //     if (playerAnimation)
-        //         playerAnimation.BackToIdleFromAttack();
-        //
-        //     if (aIAnimation)
-        //         aIAnimation.EndHurt();
-        // }
-
-        private IEnumerator PlayerWinSequence()
+        private IEnumerator PlayerWinSequence(bool isFinalRound)
         {
-            // Par sécurité : on stoppe d’éventuels dash en cours
             if (_aiMoveRoutine != null) StopCoroutine(_aiMoveRoutine);
             if (_playerMoveRoutine != null) StopCoroutine(_playerMoveRoutine);
 
-            // Remise à l'état neutre
+
             if (aIAnimation)
             {
                 aIAnimation.ResetAttack();
                 aIAnimation.PlayIdle();
             }
 
-            if (playerAnimation) playerAnimation.ResetAttack();
+            if (playerAnimation)
+                playerAnimation.ResetAttack();
 
-            // Léger délai pour laisser le texte de résultat s'afficher
+
             yield return null;
 
-            // ATTACK + DASH côté joueur
+
             float forwardDuration = dashForwardDuration;
             if (playerAnimation && playerAnimation.AttackDuration > 0f)
                 forwardDuration = playerAnimation.AttackDuration * dashAttackDurationMultiplier;
 
-            // Le joueur attaque
+
             if (playerAnimation) playerAnimation.PlayAttack();
-            // L'IA prend le coup
             if (aIAnimation) aIAnimation.PlayHurt();
 
-            // Dash + retour
+
             _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat(forwardDuration));
+
+
+            if (!isFinalRound)
+                yield break;
+
+
+            if (aIAnimation && aIAnimation.HurtDuration > 0f)
+                yield return new WaitForSeconds(aIAnimation.HurtDuration * 0.9f);
+
+            if (aIAnimation) aIAnimation.PlayDeath();
         }
 
-        // private IEnumerator AIWinSequence()
-        // {
-        //     yield return new WaitForSeconds(0.05f);
-        //
-        //     float forwardDuration = dashForwardDuration;
-        //     if (aIAnimation != null && aIAnimation.AttackDuration > 0f)
-        //         forwardDuration = aIAnimation.AttackDuration * dashAttackDurationMultiplier;
-        //
-        //     if (aIAnimation)
-        //         aIAnimation.PlayAttack();
-        //
-        //     if (playerAnimation)
-        //         playerAnimation.PlayHurt();
-        //
-        //     if (_aiMoveRoutine != null)
-        //         StopCoroutine(_aiMoveRoutine);
-        //
-        //     yield return AIDashAndRetreat(forwardDuration);
-        //
-        //     if (aIAnimation)
-        //         aIAnimation.BackToIdleFromAttack();
-        //
-        //     if (playerAnimation)
-        //         playerAnimation.EndHurt();
-        // }
-
-        private IEnumerator AIWinSequence()
+        private IEnumerator AIWinSequence(bool isFinalRound)
         {
             if (_aiMoveRoutine != null) StopCoroutine(_aiMoveRoutine);
             if (_playerMoveRoutine != null) StopCoroutine(_playerMoveRoutine);
@@ -685,7 +639,8 @@ namespace DuelState
                 playerAnimation.PlayIdle();
             }
 
-            if (aIAnimation) aIAnimation.ResetAttack();
+            if (aIAnimation)
+                aIAnimation.ResetAttack();
 
             yield return null;
 
@@ -693,12 +648,20 @@ namespace DuelState
             if (aIAnimation && aIAnimation.AttackDuration > 0f)
                 forwardDuration = aIAnimation.AttackDuration * dashAttackDurationMultiplier;
 
-            // L'IA attaque
+
             if (aIAnimation) aIAnimation.PlayAttack();
-            // Le joueur prend le coup
             if (playerAnimation) playerAnimation.PlayHurt();
 
+
             _aiMoveRoutine = StartCoroutine(AIDashAndRetreat(forwardDuration));
+
+            if (!isFinalRound)
+                yield break;
+
+            if (playerAnimation && playerAnimation.HurtDuration > 0f)
+                yield return new WaitForSeconds(playerAnimation.HurtDuration * 0.9f);
+
+            if (playerAnimation) playerAnimation.PlayDeath();
         }
     }
 }
