@@ -14,8 +14,8 @@ namespace DuelState
     {
         [Header("Refs")] [SerializeField] private DuelInputBehaviour input;
         [SerializeField] private DuelConfig config;
-        [SerializeField] private PlayerAnimationController playerAnimation;
-        [SerializeField] private PlayerAnimationController aIAnimation;
+        [SerializeField] private CharacterAnimationController playerAnimation;
+        [SerializeField] private CharacterAnimationController aIAnimation;
 
         [Header("UI settings")] [SerializeField]
         private TMP_Text stateText;
@@ -35,7 +35,6 @@ namespace DuelState
         [SerializeField] private UnityEngine.UI.Image[] aiLives;
         [SerializeField] private Sprite fullHeart;
         [SerializeField] private Sprite emptyHeart;
-        [SerializeField] private Color normalLifeColor = Color.white;
 
         [Header("Dash Settings")] [SerializeField]
         private Transform playerTransform;
@@ -262,12 +261,12 @@ namespace DuelState
             _sm.RegisterPlayerAttack(Time.realtimeSinceStartup);
             Debug.Log($"[DuelController] OnPlayerAttack called. playerAnimation assigned: {playerAnimation != null}");
 
-            
+
             // if (playerAnimation != null)
             // {
             //     playerAnimation.PlayAttack();
             // }
-            
+
             // var validAttack = _sm.State is DuelState.Signal or DuelState.Resolve;
             // if (validAttack && playerTransform != null && aiTransform != null)
             // {
@@ -286,6 +285,7 @@ namespace DuelState
             {
                 _sm.ResolveWinner();
             }
+
             Debug.Log("Player AttackDuration = " + playerAnimation.AttackDuration);
         }
 
@@ -326,92 +326,92 @@ namespace DuelState
         /// <summary>
         /// Displays the duel outcome and timing results
         /// </summary>
-private void HandleResult(DuelOutcome outcome, float? playerMs)
-{
-    Debug.Log($"[Duel] Result: {outcome} | Player: {playerMs?.ToString("F0") ?? "N/A"} ms");
+        private void HandleResult(DuelOutcome outcome, float? playerMs)
+        {
+            Debug.Log($"[Duel] Result: {outcome} | Player: {playerMs?.ToString("F0") ?? "N/A"} ms");
 
-    if (!msText) return;
-    
-    float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : null;
-    
-    msText.text = outcome switch
-    {
-        DuelOutcome.FalseStart => _sm.PlayerFalseStart
-            ? "False Start! You lose."
-            : "False Start! AI loses. You win!",
-        DuelOutcome.PlayerWin =>
-            $"You Win! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
-        DuelOutcome.AIWin =>
-            $"AI Wins! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
-        DuelOutcome.Draw =>
-            $"Draw! Both: ~{playerMs?.ToString("0") ?? "N/A"} ms",
-        DuelOutcome.NoAttack => "No attack registered.",
-        _ => ""
-    };
-    
-    switch (outcome)
-    {
-        case DuelOutcome.PlayerWin:
-            _playerScore++;
-            break;
+            if (!msText) return;
 
-        case DuelOutcome.AIWin:
-            _aiScore++;
-            break;
+            float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : null;
 
-        case DuelOutcome.FalseStart:
-            if (_sm.PlayerFalseStart)
-                _aiScore++;
-            else
-                _playerScore++;
-            break;
+            msText.text = outcome switch
+            {
+                DuelOutcome.FalseStart => _sm.PlayerFalseStart
+                    ? "False Start! You lose."
+                    : "False Start! AI loses. You win!",
+                DuelOutcome.PlayerWin =>
+                    $"You Win! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
+                DuelOutcome.AIWin =>
+                    $"AI Wins! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
+                DuelOutcome.Draw =>
+                    $"Draw! Both: ~{playerMs?.ToString("0") ?? "N/A"} ms",
+                DuelOutcome.NoAttack => "No attack registered.",
+                _ => ""
+            };
 
-        case DuelOutcome.None:
-        case DuelOutcome.Draw:
-        case DuelOutcome.NoAttack:
-            break;
+            switch (outcome)
+            {
+                case DuelOutcome.PlayerWin:
+                    _playerScore++;
+                    break;
 
-        default:
-            throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
-    }
-    
-    UpdateLivesVisual();
-    
-    switch (outcome)
-    {
-        case DuelOutcome.PlayerWin:
-            StartCoroutine(PlayerWinSequence());
-            break;
-        case DuelOutcome.AIWin:
-            StartCoroutine(AIWinSequence());
-            break;
-        case DuelOutcome.FalseStart:
-            StartCoroutine(_sm.PlayerFalseStart ? AIWinSequence() : PlayerWinSequence());
-            break;
-        case DuelOutcome.None:
-        case DuelOutcome.Draw:
-        case DuelOutcome.NoAttack:
-            break;
-        default:
-            throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
-    }
+                case DuelOutcome.AIWin:
+                    _aiScore++;
+                    break;
 
-    if (_playerScore < MaxScore && _aiScore < MaxScore) return;
-    _duelFinished = true;
-    ShowEndPanel();
-}
+                case DuelOutcome.FalseStart:
+                    if (_sm.PlayerFalseStart)
+                        _aiScore++;
+                    else
+                        _playerScore++;
+                    break;
+
+                case DuelOutcome.None:
+                case DuelOutcome.Draw:
+                case DuelOutcome.NoAttack:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
+            }
+
+            UpdateLivesVisual();
+
+            switch (outcome)
+            {
+                case DuelOutcome.PlayerWin:
+                    StartCoroutine(PlayerWinSequence());
+                    break;
+                case DuelOutcome.AIWin:
+                    StartCoroutine(AIWinSequence());
+                    break;
+                case DuelOutcome.FalseStart:
+                    StartCoroutine(_sm.PlayerFalseStart ? AIWinSequence() : PlayerWinSequence());
+                    break;
+                case DuelOutcome.None:
+                case DuelOutcome.Draw:
+                case DuelOutcome.NoAttack:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
+            }
+
+            if (_playerScore < MaxScore && _aiScore < MaxScore) return;
+            _duelFinished = true;
+            ShowEndPanel();
+        }
 
 
         private void UpdateLivesVisual()
         {
             if (playerLives == null || !fullHeart || !emptyHeart)
                 return;
-            
+
             for (var i = 0; i < playerLives.Length; i++)
             {
                 playerLives[i].sprite = i < (MaxScore - _aiScore) ? fullHeart : emptyHeart;
             }
-            
+
             for (var i = 0; i < aiLives.Length; i++)
             {
                 aiLives[i].sprite = i < (MaxScore - _playerScore) ? fullHeart : emptyHeart;
@@ -461,7 +461,7 @@ private void HandleResult(DuelOutcome outcome, float? playerMs)
                    _sm.State is DuelState.Signal or DuelState.Resolve)
                 yield return null;
 
-            
+
             if (_sm.State is DuelState.Signal or DuelState.Resolve)
             {
                 _sm.RegisterAIAttack(Time.realtimeSinceStartup);
@@ -586,7 +586,7 @@ private void HandleResult(DuelOutcome outcome, float? playerMs)
             if (aIAnimation)
                 aIAnimation.BackToIdleFromAttack();
         }
-        
+
         // private IEnumerator PlayerWinSequence()
         // {
         //     // petit délai pour laisser le texte GO / le résultat se poser
@@ -615,7 +615,7 @@ private void HandleResult(DuelOutcome outcome, float? playerMs)
         //     if (aIAnimation)
         //         aIAnimation.EndHurt();
         // }
-        
+
         private IEnumerator PlayerWinSequence()
         {
             // Par sécurité : on stoppe d’éventuels dash en cours
@@ -623,7 +623,12 @@ private void HandleResult(DuelOutcome outcome, float? playerMs)
             if (_playerMoveRoutine != null) StopCoroutine(_playerMoveRoutine);
 
             // Remise à l'état neutre
-            if (aIAnimation)  { aIAnimation.ResetAttack(); aIAnimation.PlayIdle(); }
+            if (aIAnimation)
+            {
+                aIAnimation.ResetAttack();
+                aIAnimation.PlayIdle();
+            }
+
             if (playerAnimation) playerAnimation.ResetAttack();
 
             // Léger délai pour laisser le texte de résultat s'afficher
@@ -637,7 +642,7 @@ private void HandleResult(DuelOutcome outcome, float? playerMs)
             // Le joueur attaque
             if (playerAnimation) playerAnimation.PlayAttack();
             // L'IA prend le coup
-            if (aIAnimation)     aIAnimation.PlayHurt();
+            if (aIAnimation) aIAnimation.PlayHurt();
 
             // Dash + retour
             _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat(forwardDuration));
@@ -668,14 +673,19 @@ private void HandleResult(DuelOutcome outcome, float? playerMs)
         //     if (playerAnimation)
         //         playerAnimation.EndHurt();
         // }
-        
+
         private IEnumerator AIWinSequence()
         {
             if (_aiMoveRoutine != null) StopCoroutine(_aiMoveRoutine);
             if (_playerMoveRoutine != null) StopCoroutine(_playerMoveRoutine);
 
-            if (playerAnimation) { playerAnimation.ResetAttack(); playerAnimation.PlayIdle(); }
-            if (aIAnimation)     aIAnimation.ResetAttack();
+            if (playerAnimation)
+            {
+                playerAnimation.ResetAttack();
+                playerAnimation.PlayIdle();
+            }
+
+            if (aIAnimation) aIAnimation.ResetAttack();
 
             yield return null;
 
@@ -690,6 +700,5 @@ private void HandleResult(DuelOutcome outcome, float? playerMs)
 
             _aiMoveRoutine = StartCoroutine(AIDashAndRetreat(forwardDuration));
         }
-
     }
 }

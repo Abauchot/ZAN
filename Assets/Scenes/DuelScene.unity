@@ -324,7 +324,7 @@ Animator:
   m_GameObject: {fileID: 40458752}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 2947440669e1f954888e587326b09c36, type: 2}
+  m_Controller: {fileID: 22100000, guid: 3d00086b36fadc24abb2d424b0ad7902, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -489,13 +489,12 @@ MonoBehaviour:
   - {fileID: 1063159774}
   fullHeart: {fileID: 9139294957729004389, guid: 1fee4c95db7c5ff49a91992a197066e7, type: 3}
   emptyHeart: {fileID: 4458994651616342869, guid: 1fee4c95db7c5ff49a91992a197066e7, type: 3}
-  normalLifeColor: {r: 1, g: 1, b: 1, a: 1}
   playerTransform: {fileID: 40458755}
   aiTransform: {fileID: 344815146}
   dashStopDistanceFromTarget: 2
   dashForwardDuration: 0.12
-  retreatDuration: 0.18
-  dashAttackDurationMultiplier: 1
+  retreatDuration: 1
+  dashAttackDurationMultiplier: 2
   dashCurve:
     serializedVersion: 2
     m_Curve:
@@ -897,7 +896,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 815424164945274260, guid: 5895ab3d3c279514298dd06ecba9b6c3, type: 3}
+  m_Sprite: {fileID: 815424164945274260, guid: f81e510b0ca18d243a16080e90a99f26, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -933,7 +932,7 @@ Animator:
   m_GameObject: {fileID: 344815144}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 2947440669e1f954888e587326b09c36, type: 2}
+  m_Controller: {fileID: 22100000, guid: 6b5766cf7d1c45c48aa6c0fef3677aad, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -957,8 +956,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fadfb9b00fcd4b4682a7e8c19a67846c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DuelState.PlayerAnimationController
-  attackClip: {fileID: 7400000, guid: 66e9e95232c32a14f8a77216c5b283f2, type: 2}
-  hurtClip: {fileID: 7400000, guid: c8ac8cc9f979cd242b4681d846d0b565, type: 2}
+  attackClip: {fileID: 7400000, guid: d39ac37dab8b5a4418f6b08691f91954, type: 2}
+  hurtClip: {fileID: 7400000, guid: 6f14fdd622e5b0b4c9db2f4bd4895e2f, type: 2}
 --- !u!1 &346643410
 GameObject:
   m_ObjectHideFlags: 0
@@ -7558,6 +7557,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1973749591}
   - component: {fileID: 1973749592}
+  - component: {fileID: 1973749593}
   m_Layer: 0
   m_Name: Stormy_Mountains_Front_Clouds
   m_TagString: Untagged
@@ -7638,6 +7638,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1973749593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973749590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6082a98965a949849992b1bc2b931c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CloudParallax
+  speed: 0.1
+  distance: 1
 --- !u!1 &2011065520
 GameObject:
   m_ObjectHideFlags: 0
@@ -7913,6 +7927,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2079819634}
   - component: {fileID: 2079819635}
+  - component: {fileID: 2079819636}
   m_Layer: 0
   m_Name: Stormy_Mountains_Background_Cloud_1
   m_TagString: Untagged
@@ -7993,6 +8008,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2079819636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079819633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6082a98965a949849992b1bc2b931c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CloudParallax
+  speed: 0.1
+  distance: 1
 --- !u!1 &2121539254
 GameObject:
   m_ObjectHideFlags: 0
@@ -8078,6 +8107,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2135478213}
   - component: {fileID: 2135478214}
+  - component: {fileID: 2135478215}
   m_Layer: 0
   m_Name: Stormy_Mountains_Background_Cloud_2
   m_TagString: Untagged
@@ -8158,6 +8188,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2135478215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135478212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6082a98965a949849992b1bc2b931c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CloudParallax
+  speed: 0.1
+  distance: 1
 --- !u!1 &2136786199
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@
 namespace DuelState
 {
     [RequireComponent(typeof(Animator))]
-    public class PlayerAnimationController : MonoBehaviour
+    public class CharacterAnimationController  : MonoBehaviour
     {
         [SerializeField] private AnimationClip attackClip;
         [SerializeField] private AnimationClip hurtClip;
