@@ -308,7 +308,7 @@ Transform:
   m_GameObject: {fileID: 40458752}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: -8, z: 0}
+  m_LocalPosition: {x: -5, y: -8, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -349,6 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DuelState.PlayerAnimationController
   attackClip: {fileID: 7400000, guid: 66e9e95232c32a14f8a77216c5b283f2, type: 2}
+  hurtClip: {fileID: 7400000, guid: c8ac8cc9f979cd242b4681d846d0b565, type: 2}
 --- !u!1 &78158135
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,7 +917,7 @@ Transform:
   m_GameObject: {fileID: 344815144}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
-  m_LocalPosition: {x: 10, y: -8, z: 0}
+  m_LocalPosition: {x: 5, y: -8, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -957,6 +958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DuelState.PlayerAnimationController
   attackClip: {fileID: 7400000, guid: 66e9e95232c32a14f8a77216c5b283f2, type: 2}
+  hurtClip: {fileID: 7400000, guid: c8ac8cc9f979cd242b4681d846d0b565, type: 2}
 --- !u!1 &346643410
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,7 +977,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &346643411
 RectTransform:
   m_ObjectHideFlags: 0

@@ -6,13 +6,20 @@ namespace DuelState
     public class PlayerAnimationController : MonoBehaviour
     {
         [SerializeField] private AnimationClip attackClip;
+        [SerializeField] private AnimationClip hurtClip;
         public float AttackDuration => attackClip != null ? attackClip.length : 0.2f;
+        public float HurtDuration => hurtClip != null ? hurtClip.length : 0.2f;
 
         private Animator _animator;
 
         private static readonly int IsRunHash    = Animator.StringToHash("isRun");
         private static readonly int IsAttackHash = Animator.StringToHash("isAttack");
         private static readonly int IsHurtHash   = Animator.StringToHash("isHurt");
+
+        private void Start()
+        {
+            PlayIdle();
+        }
 
         private void Awake()
         {
@@ -41,6 +48,9 @@ namespace DuelState
             _animator.SetBool(IsAttackHash, true);
             _animator.SetBool(IsRunHash, false);
             _animator.SetBool(IsHurtHash, false);
+            
+            CancelInvoke(nameof(EndAttack));
+            Invoke(nameof(EndAttack), AttackDuration * 0.9f);
         }
 
         private void EndAttack()
@@ -52,9 +62,12 @@ namespace DuelState
         public void PlayHurt()
         {
             if (!_animator) return;
+            Debug.Log("[Anim] PlayHurt sur " + gameObject.name);
             _animator.SetBool(IsHurtHash, true);
             _animator.SetBool(IsAttackHash, false);
             _animator.SetBool(IsRunHash, false);
+            CancelInvoke(nameof(EndHurt));
+            Invoke(nameof(EndHurt), HurtDuration * 0.9f);
         }
 
         public void EndHurt()

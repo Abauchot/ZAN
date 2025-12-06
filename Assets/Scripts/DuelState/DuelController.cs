@@ -260,33 +260,27 @@ namespace DuelState
         {
             if (_sm == null) return;
             _sm.RegisterPlayerAttack(Time.realtimeSinceStartup);
-
             Debug.Log($"[DuelController] OnPlayerAttack called. playerAnimation assigned: {playerAnimation != null}");
 
-            // Trigger attack animation
-            if (playerAnimation != null)
-            {
-                playerAnimation.PlayAttack();
-            }
-            else
-            {
-                Debug.LogError(
-                    "[DuelController] playerAnimation is NULL! Assign PlayerAnimationController in inspector.");
-            }
-
-            var validAttack = _sm.State is DuelState.Signal or DuelState.Resolve;
-            if (validAttack && playerTransform != null && aiTransform != null)
-            {
-                if (_playerMoveRoutine != null)
-                    StopCoroutine(_playerMoveRoutine);
-
-                float forwardDuration = dashForwardDuration;
-
-                if (playerAnimation != null && playerAnimation.AttackDuration > 0f)
-                    forwardDuration = playerAnimation.AttackDuration * dashAttackDurationMultiplier;
-
-                _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat(forwardDuration));
-            }
+            
+            // if (playerAnimation != null)
+            // {
+            //     playerAnimation.PlayAttack();
+            // }
+            
+            // var validAttack = _sm.State is DuelState.Signal or DuelState.Resolve;
+            // if (validAttack && playerTransform != null && aiTransform != null)
+            // {
+            //     if (_playerMoveRoutine != null)
+            //         StopCoroutine(_playerMoveRoutine);
+            //
+            //     float forwardDuration = dashForwardDuration;
+            //
+            //     if (playerAnimation != null && playerAnimation.AttackDuration > 0f)
+            //         forwardDuration = playerAnimation.AttackDuration * dashAttackDurationMultiplier;
+            //
+            //     _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat(forwardDuration));
+            // }
 
             if (_sm.State == DuelState.Resolve && _sm.AIAttacked)
             {
@@ -332,82 +326,98 @@ namespace DuelState
         /// <summary>
         /// Displays the duel outcome and timing results
         /// </summary>
-        private void HandleResult(DuelOutcome outcome, float? playerMs)
-        {
-            Debug.Log($"[Duel] Result: {outcome} | Player: {playerMs?.ToString("F0") ?? "N/A"} ms");
+private void HandleResult(DuelOutcome outcome, float? playerMs)
+{
+    Debug.Log($"[Duel] Result: {outcome} | Player: {playerMs?.ToString("F0") ?? "N/A"} ms");
 
-            if (!msText) return;
+    if (!msText) return;
+    
+    float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : null;
+    
+    msText.text = outcome switch
+    {
+        DuelOutcome.FalseStart => _sm.PlayerFalseStart
+            ? "False Start! You lose."
+            : "False Start! AI loses. You win!",
+        DuelOutcome.PlayerWin =>
+            $"You Win! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
+        DuelOutcome.AIWin =>
+            $"AI Wins! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
+        DuelOutcome.Draw =>
+            $"Draw! Both: ~{playerMs?.ToString("0") ?? "N/A"} ms",
+        DuelOutcome.NoAttack => "No attack registered.",
+        _ => ""
+    };
+    
+    switch (outcome)
+    {
+        case DuelOutcome.PlayerWin:
+            _playerScore++;
+            break;
 
-            // Calculate AI reaction time if they attacked
-            float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : null;
+        case DuelOutcome.AIWin:
+            _aiScore++;
+            break;
 
-            // Format result message based on outcome
-            msText.text = outcome switch
-            {
-                DuelOutcome.FalseStart => _sm.PlayerFalseStart
-                    ? "False Start! You lose."
-                    : "False Start! AI loses. You win!",
-                DuelOutcome.PlayerWin =>
-                    $"You Win! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
-                DuelOutcome.AIWin =>
-                    $"AI Wins! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
-                DuelOutcome.Draw =>
-                    $"Draw! Both: ~{playerMs?.ToString("0") ?? "N/A"} ms",
-                DuelOutcome.NoAttack => "No attack registered.",
-                _ => ""
-            };
-            switch (outcome)
-            {
-                case DuelOutcome.PlayerWin:
-                    _playerScore++;
-                    break;
-                case DuelOutcome.AIWin:
-                    _aiScore++;
-                    break;
-                case DuelOutcome.FalseStart:
-                    if (_sm.PlayerFalseStart)
-                        _aiScore++;
-                    else
-                        _playerScore++;
-                    break;
-                case DuelOutcome.None:
-                case DuelOutcome.Draw:
-                case DuelOutcome.NoAttack:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
-            }
+        case DuelOutcome.FalseStart:
+            if (_sm.PlayerFalseStart)
+                _aiScore++;
+            else
+                _playerScore++;
+            break;
 
-            UpdateLivesVisual();
-            if (_playerScore < MaxScore && _aiScore < MaxScore) return;
-            _duelFinished = true;
-            ShowEndPanel();
-        }
+        case DuelOutcome.None:
+        case DuelOutcome.Draw:
+        case DuelOutcome.NoAttack:
+            break;
+
+        default:
+            throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
+    }
+    
+    UpdateLivesVisual();
+    
+    switch (outcome)
+    {
+        case DuelOutcome.PlayerWin:
+            StartCoroutine(PlayerWinSequence());
+            break;
+        case DuelOutcome.AIWin:
+            StartCoroutine(AIWinSequence());
+            break;
+        case DuelOutcome.FalseStart:
+            StartCoroutine(_sm.PlayerFalseStart ? AIWinSequence() : PlayerWinSequence());
+            break;
+        case DuelOutcome.None:
+        case DuelOutcome.Draw:
+        case DuelOutcome.NoAttack:
+            break;
+        default:
+            throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null);
+    }
+
+    if (_playerScore < MaxScore && _aiScore < MaxScore) return;
+    _duelFinished = true;
+    ShowEndPanel();
+}
+
 
         private void UpdateLivesVisual()
         {
             if (playerLives == null || !fullHeart || !emptyHeart)
-            {
                 return;
-            }
-
+            
             for (var i = 0; i < playerLives.Length; i++)
             {
                 playerLives[i].sprite = i < (MaxScore - _aiScore) ? fullHeart : emptyHeart;
-                playerLives[i].color = normalLifeColor;
             }
-
-            if (aiLives == null)
-            {
-                return;
-            }
-
+            
             for (var i = 0; i < aiLives.Length; i++)
             {
                 aiLives[i].sprite = i < (MaxScore - _playerScore) ? fullHeart : emptyHeart;
-                aiLives[i].color = normalLifeColor;
             }
         }
+
 
         private void ShowEndPanel()
         {
@@ -455,18 +465,18 @@ namespace DuelState
             if (_sm.State is DuelState.Signal or DuelState.Resolve)
             {
                 _sm.RegisterAIAttack(Time.realtimeSinceStartup);
-
-                if (aIAnimation)
-                    aIAnimation.PlayAttack();
-                
-                if (_aiMoveRoutine != null)
-                    StopCoroutine(_aiMoveRoutine);
-
-                float forwardDuration = dashForwardDuration;
-                if (aIAnimation && aIAnimation.AttackDuration > 0f)
-                    forwardDuration = aIAnimation.AttackDuration * dashAttackDurationMultiplier;
-
-                _aiMoveRoutine = StartCoroutine(AIDashAndRetreat(forwardDuration));
+                //
+                // if (aIAnimation)
+                //     aIAnimation.PlayAttack();
+                //
+                // if (_aiMoveRoutine != null)
+                //     StopCoroutine(_aiMoveRoutine);
+                //
+                // float forwardDuration = dashForwardDuration;
+                // if (aIAnimation && aIAnimation.AttackDuration > 0f)
+                //     forwardDuration = aIAnimation.AttackDuration * dashAttackDurationMultiplier;
+                //
+                // _aiMoveRoutine = StartCoroutine(AIDashAndRetreat(forwardDuration));
             }
 
             else
@@ -486,6 +496,11 @@ namespace DuelState
             dir.Normalize();
 
             Vector3 dashEnd = aiTransform.position - dir * dashStopDistanceFromTarget;
+
+            if (playerAnimation)
+            {
+                playerAnimation.PlayAttack();
+            }
 
             // PHASE 1 : dash towards AI
             var t = 0f;
@@ -533,6 +548,11 @@ namespace DuelState
 
             Vector3 dashEnd = playerTransform.position - dir * dashStopDistanceFromTarget;
 
+            if (aIAnimation)
+            {
+                aIAnimation.PlayAttack();
+            }
+
             // PHASE 1 : dash towards Player
             var t = 0f;
             while (t < 1f)
@@ -565,7 +585,111 @@ namespace DuelState
 
             if (aIAnimation)
                 aIAnimation.BackToIdleFromAttack();
-
         }
+        
+        // private IEnumerator PlayerWinSequence()
+        // {
+        //     // petit délai pour laisser le texte GO / le résultat se poser
+        //     yield return new WaitForSeconds(0.05f);
+        //
+        //     float forwardDuration = dashForwardDuration;
+        //     if (playerAnimation != null && playerAnimation.AttackDuration > 0f)
+        //         forwardDuration = playerAnimation.AttackDuration * dashAttackDurationMultiplier;
+        //
+        //     // gagnant : attaque + dash
+        //     if (playerAnimation)
+        //         playerAnimation.PlayAttack();
+        //
+        //     if (aIAnimation)
+        //         aIAnimation.PlayHurt();
+        //
+        //     if (_playerMoveRoutine != null)
+        //         StopCoroutine(_playerMoveRoutine);
+        //
+        //     yield return PlayerDashAndRetreat(forwardDuration);
+        //
+        //     // retour idle propre
+        //     if (playerAnimation)
+        //         playerAnimation.BackToIdleFromAttack();
+        //
+        //     if (aIAnimation)
+        //         aIAnimation.EndHurt();
+        // }
+        
+        private IEnumerator PlayerWinSequence()
+        {
+            // Par sécurité : on stoppe d’éventuels dash en cours
+            if (_aiMoveRoutine != null) StopCoroutine(_aiMoveRoutine);
+            if (_playerMoveRoutine != null) StopCoroutine(_playerMoveRoutine);
+
+            // Remise à l'état neutre
+            if (aIAnimation)  { aIAnimation.ResetAttack(); aIAnimation.PlayIdle(); }
+            if (playerAnimation) playerAnimation.ResetAttack();
+
+            // Léger délai pour laisser le texte de résultat s'afficher
+            yield return null;
+
+            // ATTACK + DASH côté joueur
+            float forwardDuration = dashForwardDuration;
+            if (playerAnimation && playerAnimation.AttackDuration > 0f)
+                forwardDuration = playerAnimation.AttackDuration * dashAttackDurationMultiplier;
+
+            // Le joueur attaque
+            if (playerAnimation) playerAnimation.PlayAttack();
+            // L'IA prend le coup
+            if (aIAnimation)     aIAnimation.PlayHurt();
+
+            // Dash + retour
+            _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat(forwardDuration));
+        }
+
+        // private IEnumerator AIWinSequence()
+        // {
+        //     yield return new WaitForSeconds(0.05f);
+        //
+        //     float forwardDuration = dashForwardDuration;
+        //     if (aIAnimation != null && aIAnimation.AttackDuration > 0f)
+        //         forwardDuration = aIAnimation.AttackDuration * dashAttackDurationMultiplier;
+        //
+        //     if (aIAnimation)
+        //         aIAnimation.PlayAttack();
+        //
+        //     if (playerAnimation)
+        //         playerAnimation.PlayHurt();
+        //
+        //     if (_aiMoveRoutine != null)
+        //         StopCoroutine(_aiMoveRoutine);
+        //
+        //     yield return AIDashAndRetreat(forwardDuration);
+        //
+        //     if (aIAnimation)
+        //         aIAnimation.BackToIdleFromAttack();
+        //
+        //     if (playerAnimation)
+        //         playerAnimation.EndHurt();
+        // }
+        
+        private IEnumerator AIWinSequence()
+        {
+            if (_aiMoveRoutine != null) StopCoroutine(_aiMoveRoutine);
+            if (_playerMoveRoutine != null) StopCoroutine(_playerMoveRoutine);
+
+            if (playerAnimation) { playerAnimation.ResetAttack(); playerAnimation.PlayIdle(); }
+            if (aIAnimation)     aIAnimation.ResetAttack();
+
+            yield return null;
+
+            float forwardDuration = dashForwardDuration;
+            if (aIAnimation && aIAnimation.AttackDuration > 0f)
+                forwardDuration = aIAnimation.AttackDuration * dashAttackDurationMultiplier;
+
+            // L'IA attaque
+            if (aIAnimation) aIAnimation.PlayAttack();
+            // Le joueur prend le coup
+            if (playerAnimation) playerAnimation.PlayHurt();
+
+            _aiMoveRoutine = StartCoroutine(AIDashAndRetreat(forwardDuration));
+        }
+
     }
 }

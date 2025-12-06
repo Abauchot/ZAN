@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waitingTimeRange: {x: 1, y: 3}
   resultStaySeconds: 4
-  aiReactRangeMs: {x: 600, y: 800}
-  aiFalseStartChance: 0.225
+  aiReactRangeMs: {x: 500, y: 500}
+  aiFalseStartChance: 0.3
