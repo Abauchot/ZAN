@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerController player;
     
     [Header("Duel Mode")]
-    [SerializeField] private bool isDuelMode = false;
+    [SerializeField] private bool isDuelMode;
 
     private void OnEnable()
     {

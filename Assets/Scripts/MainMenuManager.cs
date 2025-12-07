@@ -26,6 +26,7 @@ public class MainMenuManager : MonoBehaviour
 
     private System.Collections.IEnumerator StartDuelSequence()
     {
+        MusicManager.Instance?.PlayMusic(MusicTrack.None);
         MusicManager.PlaySfxStatic(buttonClickSfx);
 
         float timer = 0f;

@@ -102,6 +102,15 @@ namespace ZAN.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""0c59640c-d9d6-4668-a7b3-688be14446b2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -124,6 +133,17 @@ namespace ZAN.Input
                     ""processors"": """",
                     ""groups"": "";Touch"",
                     ""action"": ""DuelInputs"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a27a835c-4435-483d-a756-442bcdfc18a0"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -712,6 +732,7 @@ namespace ZAN.Input
             // Player
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_DuelInputs = m_Player.FindAction("DuelInputs", throwIfNotFound: true);
+            m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -806,6 +827,7 @@ namespace ZAN.Input
         private readonly InputActionMap m_Player;
         private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
         private readonly InputAction m_Player_DuelInputs;
+        private readonly InputAction m_Player_Pause;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -821,6 +843,10 @@ namespace ZAN.Input
             /// Provides access to the underlying input action "Player/DuelInputs".
             /// </summary>
             public InputAction @DuelInputs => m_Wrapper.m_Player_DuelInputs;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/Pause".
+            /// </summary>
+            public InputAction @Pause => m_Wrapper.m_Player_Pause;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -850,6 +876,9 @@ namespace ZAN.Input
                 @DuelInputs.started += instance.OnDuelInputs;
                 @DuelInputs.performed += instance.OnDuelInputs;
                 @DuelInputs.canceled += instance.OnDuelInputs;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
 
             /// <summary>
@@ -864,6 +893,9 @@ namespace ZAN.Input
                 @DuelInputs.started -= instance.OnDuelInputs;
                 @DuelInputs.performed -= instance.OnDuelInputs;
                 @DuelInputs.canceled -= instance.OnDuelInputs;
+                @Pause.started -= instance.OnPause;
+                @Pause.performed -= instance.OnPause;
+                @Pause.canceled -= instance.OnPause;
             }
 
             /// <summary>
@@ -1171,6 +1203,13 @@ namespace ZAN.Input
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnDuelInputs(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnPause(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

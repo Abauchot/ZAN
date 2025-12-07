@@ -10,6 +10,7 @@ public class DuelInputBehaviour : MonoBehaviour
     
     
     public event Action OnAttack;
+    public event Action OnPause;
     
     private void Awake()
     {
@@ -19,6 +20,7 @@ public class DuelInputBehaviour : MonoBehaviour
     private void OnEnable()
     {
         _inputActions.Player.DuelInputs.performed += HandleAttack;
+        _inputActions.Player.Pause.performed += HandlePause;
         _inputActions.Player.Enable();
 
     }
@@ -26,6 +28,7 @@ public class DuelInputBehaviour : MonoBehaviour
     private void OnDisable()
     {
         _inputActions.Player.DuelInputs.performed -= HandleAttack;
+        _inputActions.Player.Pause.performed -= HandlePause;
         _inputActions.Player.Disable();
     }
 
@@ -39,6 +42,11 @@ public class DuelInputBehaviour : MonoBehaviour
         if (_attackConsumed) return;
         _attackConsumed = true;
         OnAttack?.Invoke();
+    }
+    
+    private void HandlePause(InputAction.CallbackContext context)
+    {
+        OnPause?.Invoke();
     }
 
     public void ResetAttack()

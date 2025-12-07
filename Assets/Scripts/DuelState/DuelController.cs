@@ -17,11 +17,17 @@ namespace DuelState
         [SerializeField] private CharacterAnimationController playerAnimation;
         [SerializeField] private CharacterAnimationController aIAnimation;
 
-        [Header("UI settings")] [SerializeField]
-        private TMP_Text stateText;
-
-        [SerializeField] private TMP_Text msText;
+        [Header("UI settings")]
+        [SerializeField] private TMP_Text stateText;
+        [SerializeField] private TMP_Text resultText;
         [SerializeField] private TMP_Text hintText;
+        [SerializeField] private TMP_Text playerMsText;
+        [SerializeField] private TMP_Text aiMsText;
+        
+        [Header("Pause UI")]
+        [SerializeField] private GameObject pausePanel;
+        [SerializeField] private UnityEngine.UI.Button resumePauseButton;
+        [SerializeField] private UnityEngine.UI.Button menuPauseButton;
 
         [Header("BO5 Settings")] [SerializeField]
         private GameObject endPanel;
@@ -39,11 +45,17 @@ namespace DuelState
 
         [Header("Dash Settings")] [SerializeField]
         private Transform playerTransform;
+
+        [Header("Flash FX")] 
+        [SerializeField] private CanvasGroup flashCanvas;
+        [SerializeField] private float flashDuration = 0.15f;
+        [SerializeField] private float flashMaxAlpha = 0.2f;
         
         [Header("SFX")]
         [SerializeField] private AudioClip attackSfx;
         [SerializeField] private AudioClip hitSfx;
         [SerializeField] private AudioClip gameOverSfx;
+        [SerializeField] private AudioClip signalSfx;
 
         [SerializeField] private Transform aiTransform;
         [SerializeField] private float dashStopDistanceFromTarget = 2f;
@@ -54,12 +66,16 @@ namespace DuelState
         [SerializeField] private AnimationCurve retreatCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         private Vector3 _playerStartPos;
         private Vector3 _aiStartPos;
+        private Vector3 _playerStartScale;
+        private Vector3 _aiStartScale;
         private Coroutine _playerMoveRoutine;
         private Coroutine _aiMoveRoutine;
 
         private DuelStateMachine _sm;
         private Coroutine _loop;
         private Coroutine _aiRoutine;
+        
+        private bool _isPaused;
 
         private int _playerScore;
         private int _aiScore;
@@ -79,6 +95,15 @@ namespace DuelState
             _sm.OnStateChanged += HandleStateChanged;
             _sm.OnSignal += HandleSignal;
             _sm.OnDuelEnded += HandleResult;
+            
+            if (pausePanel != null)
+                pausePanel.SetActive(false);
+
+            if (resumePauseButton != null)
+                resumePauseButton.onClick.AddListener(ResumeFromPause);
+
+            if (menuPauseButton != null)
+                menuPauseButton.onClick.AddListener(ReturnToMenuFromPause);
 
             if (endPanel != null)
             {
@@ -100,11 +125,13 @@ namespace DuelState
             if (playerTransform != null)
             {
                 _playerStartPos = playerTransform.position;
+                _playerStartScale = playerTransform.localScale;
             }
 
             if (aiTransform != null)
             {
                 _aiStartPos = aiTransform.position;
+                _aiStartScale = aiTransform.localScale;
             }
         }
 
@@ -113,6 +140,7 @@ namespace DuelState
             if (input != null)
             {
                 input.OnAttack += OnPlayerAttack;
+                input.OnPause += HandlePause;
             }
         }
 
@@ -121,11 +149,63 @@ namespace DuelState
             if (input != null)
             {
                 input.OnAttack -= OnPlayerAttack;
+                input.OnPause -= HandlePause;
             }
 
             if (_loop != null) StopCoroutine(_loop);
         }
 
+        private void HandlePause()
+        {
+            if (_duelFinished) return;        
+            if (_isPaused) return;           
+
+            _isPaused = true;
+
+       
+            input.SetAttackEnabled(false);
+            
+            if (_loop != null)
+            {
+                StopCoroutine(_loop);
+                _loop = null;
+            }
+
+            if (_aiRoutine != null)
+            {
+                StopCoroutine(_aiRoutine);
+                _aiRoutine = null;
+            }
+            
+            ResetCharactersToIdle();
+            
+            if (pausePanel)
+                pausePanel.SetActive(true);
+            
+        }
+        
+        private void ResumeFromPause()
+        {
+            if (!_isPaused) return;
+
+            _isPaused = false;
+
+            if (pausePanel)
+                pausePanel.SetActive(false);
+            
+            StartRound();
+        }
+        
+        private void ReturnToMenuFromPause()
+        {
+            _isPaused = false;
+
+            if (pausePanel)
+                pausePanel.SetActive(false);
+            Time.timeScale = 1f;
+
+            SceneManager.LoadScene("Menu");
+        }
         private void Start()
         {
             if (_sm != null && input != null && config != null)
@@ -138,6 +218,8 @@ namespace DuelState
             _duelFinished = false;
             UpdateLivesVisual();
             
+            HideRoundResultUI();
+            
             MusicManager.Instance?.PlayMusic(MusicTrack.Duel);
         }
 
@@ -146,6 +228,7 @@ namespace DuelState
         /// </summary>
         private void StartRound()
         {
+            HideRoundResultUI();
             if (playerTransform && _playerMoveRoutine != null)
             {
                 StopCoroutine(_playerMoveRoutine);
@@ -292,12 +375,10 @@ namespace DuelState
             {
                 hintText.text = s switch
                 {
-                    DuelState.Ready => "Get ready…",
-                    DuelState.Waiting => "Don't move!",
-                    DuelState.Signal => "GO!",
-                    DuelState.Resolve => "Resolving…",
-                    DuelState.Results => "Result",
-                    _ => hintText.text
+                    DuelState.Ready   => "GET READY",
+                    DuelState.Waiting => "HOLD...",
+                    DuelState.Signal  => "DRAW!",
+                    _                 => string.Empty
                 };
             }
         }
@@ -307,6 +388,13 @@ namespace DuelState
         /// </summary>
         private void HandleSignal()
         {
+            if (signalSfx)
+            {
+                MusicManager.PlaySfxStatic(signalSfx);
+            }
+
+            StartCoroutine(FlashEffect());
+            
             if (_aiRoutine != null) StopCoroutine(_aiRoutine);
             _aiRoutine = StartCoroutine(AIReactAfterDelay());
         }
@@ -316,24 +404,76 @@ namespace DuelState
         /// </summary>
         private void HandleResult(DuelOutcome outcome, float? playerMs)
         {
-            if (!msText) return;
-
             float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : null;
 
-            msText.text = outcome switch
+            if (playerMsText)
             {
-                DuelOutcome.FalseStart => _sm.PlayerFalseStart
-                    ? "False Start! You lose."
-                    : "False Start! AI loses. You win!",
-                DuelOutcome.PlayerWin =>
-                    $"You Win! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
-                DuelOutcome.AIWin =>
-                    $"AI Wins! Player: {playerMs?.ToString("0") ?? "N/A"} ms | AI: {aiMs?.ToString("0") ?? "N/A"} ms",
-                DuelOutcome.Draw =>
-                    $"Draw! Both: ~{playerMs?.ToString("0") ?? "N/A"} ms",
-                DuelOutcome.NoAttack => "No attack registered.",
-                _ => ""
-            };
+                playerMsText.text = string.Empty;
+                playerMsText.gameObject.SetActive(false);
+            }
+            
+            if (aiMsText)
+            {
+                aiMsText.text = string.Empty;
+                aiMsText.gameObject.SetActive(false);
+            }
+            
+            string resultLabel = string.Empty;
+
+            switch (outcome)
+            {
+                case DuelOutcome.PlayerWin:
+                    resultLabel = "YOU WIN!";
+                    if (playerMsText && playerMs.HasValue)
+                    {
+                        playerMsText.text = $"{playerMs.Value:0} ms";
+                        playerMsText.gameObject.SetActive(true);
+                    }
+                    break;
+
+                case DuelOutcome.AIWin:
+                    resultLabel = "AI WINS!";
+                    if (aiMsText && aiMs.HasValue)
+                    {
+                        aiMsText.text = $"{aiMs.Value:0} ms";
+                        aiMsText.gameObject.SetActive(true);
+                    }
+                    break;
+
+                case DuelOutcome.Draw:
+                    resultLabel = "DRAW!";
+                    if (playerMsText && playerMs.HasValue)
+                    {
+                        playerMsText.text = $"{playerMs.Value:0} ms";
+                        playerMsText.gameObject.SetActive(true);
+                    }
+                    if (aiMsText && aiMs.HasValue)
+                    {
+                        aiMsText.text = $"{aiMs.Value:0} ms";
+                        aiMsText.gameObject.SetActive(true);
+                    }
+                    break;
+
+                case DuelOutcome.FalseStart:
+                    resultLabel = _sm.PlayerFalseStart
+                        ? "FALSE START! You lose"
+                        : "FALSE START! AI loses";
+                    if (attackSfx)
+                    {
+                        MusicManager.PlaySfxStatic(attackSfx);
+                    }
+                    break;
+
+                case DuelOutcome.NoAttack:
+                    resultLabel = "No attack registered.";
+                    break;
+            }
+
+            if (resultText)
+            {
+                resultText.gameObject.SetActive(true);
+                resultText.text = resultLabel;
+            }
 
             switch (outcome)
             {
@@ -428,6 +568,11 @@ namespace DuelState
 
         private void ShowEndPanel()
         {
+            if (resultText)
+            {
+                resultText.gameObject.SetActive(false);
+            }
+            
             if (!endPanel || !endMessage) return;
 
             endPanel.SetActive(true);
@@ -502,8 +647,6 @@ namespace DuelState
             {
                 playerAnimation.PlayAttack();
             }
-
-            // PHASE 1 : dash towards AI
             var t = 0f;
             while (t < 1f)
             {
@@ -514,13 +657,22 @@ namespace DuelState
             }
 
             playerTransform.position = dashEnd;
-
-            // small contact time at the end of the dash
+            
             yield return new WaitForSeconds(0.05f);
 
-            // PHASE 2 : return to start with run animation
+          
             if (playerAnimation)
+            {
+                playerAnimation.ResetAttack();
                 playerAnimation.PlayRun();
+            }
+
+           
+            playerTransform.localScale = new Vector3(
+                -_playerStartScale.x,
+                _playerStartScale.y,
+                _playerStartScale.z
+            );
 
             t = 0f;
             while (t < 1f)
@@ -532,6 +684,8 @@ namespace DuelState
             }
 
             playerTransform.position = start;
+            
+            playerTransform.localScale = _playerStartScale;
 
             if (playerAnimation)
                 playerAnimation.BackToIdleFromAttack();
@@ -553,8 +707,7 @@ namespace DuelState
             {
                 aIAnimation.PlayAttack();
             }
-
-            // PHASE 1 : dash towards Player
+            
             var t = 0f;
             while (t < 1f)
             {
@@ -566,12 +719,19 @@ namespace DuelState
 
             aiTransform.position = dashEnd;
 
-            // small contact time at the end of the dash
             yield return new WaitForSeconds(0.05f);
-
-            // PHASE 2 : return to start with run animation
+            
             if (aIAnimation)
+            {
+                aIAnimation.ResetAttack();
                 aIAnimation.PlayRun();
+            }
+
+            aiTransform.localScale = new Vector3(
+                -_aiStartScale.x,
+                _aiStartScale.y,
+                _aiStartScale.z
+            );
 
             t = 0f;
             while (t < 1f)
@@ -583,10 +743,12 @@ namespace DuelState
             }
 
             aiTransform.position = start;
+            aiTransform.localScale = _aiStartScale;
 
             if (aIAnimation)
                 aIAnimation.BackToIdleFromAttack();
         }
+
 
         private IEnumerator PlayerWinSequence(bool isFinalRound)
         {
@@ -672,6 +834,51 @@ namespace DuelState
 
             if (playerAnimation) playerAnimation.PlayDeath();
         }
+
+        private IEnumerator FlashEffect()
+        {
+            if (!flashCanvas)
+                yield break;
+
+            flashCanvas.gameObject.SetActive(true);
+            flashCanvas.alpha = 0f;
+
+            float half = flashDuration * 0.5f;
+            float t = 0f;
+            
+            while (t < half)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = Mathf.Clamp01(t / half);
+                flashCanvas.alpha = Mathf.Lerp(0f, flashMaxAlpha, k);
+                yield return null;
+            }
+            
+            t = 0f;
+            while (t < half)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = Mathf.Clamp01(t / half);
+                flashCanvas.alpha = Mathf.Lerp(flashMaxAlpha, 0f, k);
+                yield return null;
+            }
+
+            flashCanvas.alpha = 0f;
+            flashCanvas.gameObject.SetActive(false);
+        }
+        
+        private void HideRoundResultUI()
+        {
+            if (resultText)
+                resultText.gameObject.SetActive(false);
+
+            if (playerMsText)
+                playerMsText.gameObject.SetActive(false);
+
+            if (aiMsText)
+                aiMsText.gameObject.SetActive(false);
+        }
+
 
         private void ResetCharactersToIdle()
         {
