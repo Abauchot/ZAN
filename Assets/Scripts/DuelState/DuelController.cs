@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
-
+using UnityEngine.SceneManagement;
 
 namespace DuelState
 {
@@ -26,8 +26,9 @@ namespace DuelState
         [Header("BO5 Settings")] [SerializeField]
         private GameObject endPanel;
 
-        [SerializeField] private TMP_Text endText;
+        [SerializeField] private TMP_Text endMessage;
         [SerializeField] private UnityEngine.UI.Button restartButton;
+        [SerializeField] private UnityEngine.UI.Button menuButton;
 
         [Header("BO5 Visuals")] [SerializeField]
         private UnityEngine.UI.Image[] playerLives;
@@ -62,17 +63,8 @@ namespace DuelState
 
         private void Awake()
         {
-            // Validate required references
-            if (input == null)
+            if (input == null || config == null)
             {
-                Debug.LogError("[DuelController] DuelInputBehaviour reference is missing!", this);
-                enabled = false;
-                return;
-            }
-
-            if (config == null)
-            {
-                Debug.LogError("[DuelController] DuelConfig reference is missing!", this);
                 enabled = false;
                 return;
             }
@@ -84,9 +76,20 @@ namespace DuelState
             _sm.OnDuelEnded += HandleResult;
 
             if (endPanel != null)
+            {
                 endPanel.SetActive(false);
+            }
+
             if (restartButton != null)
+            {
                 restartButton.onClick.AddListener(RestartBo5);
+            }
+
+            if (menuButton != null)
+            {
+                menuButton.onClick.AddListener(() => SceneManager.LoadScene("Scenes/Menu"));
+            }
+
             UpdateLivesVisual();
 
             if (playerTransform != null)
@@ -120,7 +123,6 @@ namespace DuelState
 
         private void Start()
         {
-            // Extra validation before starting
             if (_sm != null && input != null && config != null)
             {
                 StartRound();
@@ -149,6 +151,7 @@ namespace DuelState
                 aiTransform.position = _aiStartPos;
             }
 
+            ResetCharactersToIdle();
 
             if (_sm == null || !input || !config) return;
 
@@ -192,7 +195,6 @@ namespace DuelState
                 // Check if AI makes a false start
                 if (Time.realtimeSinceStartup - t0 >= aiFalseStartTime)
                 {
-                    Debug.Log("[AI] False Start!");
                     _sm.TriggerFalseStart();
                     break;
                 }
@@ -259,7 +261,6 @@ namespace DuelState
         {
             if (_sm == null) return;
             _sm.RegisterPlayerAttack(Time.realtimeSinceStartup);
-            Debug.Log($"[DuelController] OnPlayerAttack called. playerAnimation assigned: {playerAnimation != null}");
 
 
             // if (playerAnimation != null)
@@ -285,8 +286,6 @@ namespace DuelState
             {
                 _sm.ResolveWinner();
             }
-
-            Debug.Log("Player AttackDuration = " + playerAnimation.AttackDuration);
         }
 
         // === UI CALLBACKS ===
@@ -309,9 +308,6 @@ namespace DuelState
                     _ => hintText.text
                 };
             }
-
-            // Debug log
-            Debug.Log($"[Duel] -> {s}");
         }
 
         /// <summary>
@@ -328,8 +324,6 @@ namespace DuelState
         /// </summary>
         private void HandleResult(DuelOutcome outcome, float? playerMs)
         {
-            Debug.Log($"[Duel] Result: {outcome} | Player: {playerMs?.ToString("F0") ?? "N/A"} ms");
-
             if (!msText) return;
 
             float? aiMs = _sm.AIAttacked ? (_sm.AIAttackAtRealTime - _sm.SignalAtRealTime) * 1000f : null;
@@ -384,10 +378,17 @@ namespace DuelState
             {
                 _duelFinished = true;
 
-                if (playerReachedMax)
-                    StartCoroutine(PlayerWinSequence(true));
-                else
-                    StartCoroutine(AIWinSequence(true));
+                if (_loop != null)
+                {
+                    StopCoroutine(_loop);
+                    _loop = null;
+                }
+
+                input.SetAttackEnabled(false);
+
+                StartCoroutine(playerReachedMax
+                    ? PlayerWinSequence(true)
+                    : AIWinSequence(true));
 
                 ShowEndPanel();
                 return;
@@ -433,9 +434,14 @@ namespace DuelState
 
         private void ShowEndPanel()
         {
-            if (!endPanel || !endText) return;
+            if (!endPanel || !endMessage) return;
+
             endPanel.SetActive(true);
-            endText.text = _playerScore > _aiScore ? "You win !" : "AI win !";
+            bool playerwon = _playerScore > _aiScore;
+
+            endMessage.text = playerwon
+                ? "YOU WIN ! \nYou're a true duel master !"
+                : "AI WINS ! \nYou should have trained more !";
         }
 
         private void RestartBo5()
@@ -443,8 +449,13 @@ namespace DuelState
             _playerScore = 0;
             _aiScore = 0;
             _duelFinished = false;
+
             if (endPanel != null)
+            {
                 endPanel.SetActive(false);
+            }
+
+            ResetCharactersToIdle();
             UpdateLivesVisual();
             StartRound();
         }
@@ -477,11 +488,6 @@ namespace DuelState
             if (_sm.State is DuelState.Signal or DuelState.Resolve)
             {
                 _sm.RegisterAIAttack(Time.realtimeSinceStartup);
-            }
-
-            else
-            {
-                Debug.Log($"[AI] Cannot attack - invalid state: {_sm.State}");
             }
         }
 
@@ -662,6 +668,12 @@ namespace DuelState
                 yield return new WaitForSeconds(playerAnimation.HurtDuration * 0.9f);
 
             if (playerAnimation) playerAnimation.PlayDeath();
+        }
+
+        private void ResetCharactersToIdle()
+        {
+            playerAnimation?.ForceIdleState();
+            aIAnimation?.ForceIdleState();
         }
     }
 }

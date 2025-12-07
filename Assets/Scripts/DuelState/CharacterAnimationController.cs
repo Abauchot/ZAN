@@ -83,10 +83,8 @@ namespace DuelState
         public void PlayDeath()
         {
             if (!_animator) return;
-            _animator.SetBool(IsRunHash, false);
-            _animator.SetBool(IsAttackHash, false);
-            _animator.SetBool(IsHurtHash, false);
-            _animator.SetBool(IsDeathHash, true);
+            _animator.ResetTrigger(IsDeathHash);
+            _animator.SetTrigger(IsDeathHash);
         }
 
         public void ResetAttack()
@@ -98,6 +96,15 @@ namespace DuelState
         {
             EndAttack();
             PlayIdle();
+        }
+        
+        public void ForceIdleState()
+        {
+            if (!_animator) return;
+            _animator.Rebind();
+            _animator.Update(0f);
+            _animator.Play("Base_Idle", 0, 0f);
+            _animator.Update(0f);
         }
     }
 }
