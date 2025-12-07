@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: aea30c6de14b8b843a83b574b9d24cd7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - musicSource: {instanceID: 0}
+  - sfxSource: {instanceID: 0}
+  - menuMusic: {fileID: 8300000, guid: f34978550c6c4b9409c4ca8d42c423a6, type: 3}
+  - duelMusic: {instanceID: 0}
+  - gameOverMusic: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

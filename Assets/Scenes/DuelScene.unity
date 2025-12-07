@@ -492,6 +492,8 @@ MonoBehaviour:
   fullHeart: {fileID: 9139294957729004389, guid: 1fee4c95db7c5ff49a91992a197066e7, type: 3}
   emptyHeart: {fileID: 4458994651616342869, guid: 1fee4c95db7c5ff49a91992a197066e7, type: 3}
   playerTransform: {fileID: 40458755}
+  attackSfx: {fileID: 8300000, guid: 9d503b93c0dcd9e42a1071ed9b2b29c2, type: 3}
+  hitSfx: {fileID: 8300000, guid: 7007847161eabd3489c8cb8c6bb4f485, type: 3}
   aiTransform: {fileID: 344815146}
   dashStopDistanceFromTarget: 2
   dashForwardDuration: 0.12

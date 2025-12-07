@@ -39,6 +39,11 @@ namespace DuelState
 
         [Header("Dash Settings")] [SerializeField]
         private Transform playerTransform;
+        
+        [Header("SFX")]
+        [SerializeField] private AudioClip attackSfx;
+        [SerializeField] private AudioClip hitSfx;
+        [SerializeField] private AudioClip gameOverSfx;
 
         [SerializeField] private Transform aiTransform;
         [SerializeField] private float dashStopDistanceFromTarget = 2f;
@@ -132,6 +137,8 @@ namespace DuelState
             _aiScore = 0;
             _duelFinished = false;
             UpdateLivesVisual();
+            
+            MusicManager.Instance?.PlayMusic(MusicTrack.Duel);
         }
 
         /// <summary>
@@ -262,25 +269,10 @@ namespace DuelState
             if (_sm == null) return;
             _sm.RegisterPlayerAttack(Time.realtimeSinceStartup);
 
-
-            // if (playerAnimation != null)
-            // {
-            //     playerAnimation.PlayAttack();
-            // }
-
-            // var validAttack = _sm.State is DuelState.Signal or DuelState.Resolve;
-            // if (validAttack && playerTransform != null && aiTransform != null)
-            // {
-            //     if (_playerMoveRoutine != null)
-            //         StopCoroutine(_playerMoveRoutine);
-            //
-            //     float forwardDuration = dashForwardDuration;
-            //
-            //     if (playerAnimation != null && playerAnimation.AttackDuration > 0f)
-            //         forwardDuration = playerAnimation.AttackDuration * dashAttackDurationMultiplier;
-            //
-            //     _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat(forwardDuration));
-            // }
+            if (_sm.State is DuelState.Signal or DuelState.Resolve)
+            {
+                MusicManager.PlaySfxStatic(attackSfx);
+            }
 
             if (_sm.State == DuelState.Resolve && _sm.AIAttacked)
             {
@@ -385,6 +377,8 @@ namespace DuelState
                 }
 
                 input.SetAttackEnabled(false);
+                
+                MusicManager.Instance?.PlayMusic(MusicTrack.GameOver);
 
                 StartCoroutine(playerReachedMax
                     ? PlayerWinSequence(true)
@@ -487,6 +481,7 @@ namespace DuelState
 
             if (_sm.State is DuelState.Signal or DuelState.Resolve)
             {
+                MusicManager.PlaySfxStatic(attackSfx);
                 _sm.RegisterAIAttack(Time.realtimeSinceStartup);
             }
         }
@@ -618,7 +613,11 @@ namespace DuelState
 
 
             if (playerAnimation) playerAnimation.PlayAttack();
-            if (aIAnimation) aIAnimation.PlayHurt();
+            if (aIAnimation)
+            {
+                MusicManager.PlaySfxStatic(hitSfx);
+                aIAnimation.PlayHurt();
+            }
 
 
             _playerMoveRoutine = StartCoroutine(PlayerDashAndRetreat(forwardDuration));
@@ -656,7 +655,11 @@ namespace DuelState
 
 
             if (aIAnimation) aIAnimation.PlayAttack();
-            if (playerAnimation) playerAnimation.PlayHurt();
+            if (playerAnimation)
+            {
+                MusicManager.PlaySfxStatic(hitSfx);
+                playerAnimation.PlayHurt();
+            }
 
 
             _aiMoveRoutine = StartCoroutine(AIDashAndRetreat(forwardDuration));
